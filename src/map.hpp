@@ -126,11 +126,18 @@ template<
         delete x;
         return l;
       } else {
-        // push the node down by rotation to avoid modifying const key
-        x = rotate_right(x);
-        if (x->right) x->right->parent = x;
-        x->right = erase_rec(x->right, key, removed);
-        if (x->right) x->right->parent = x;
+        // push target down using direction by subtree level
+        if (lvl(x->left) >= lvl(x->right)) {
+          x = rotate_right(x);
+          if (x->right) x->right->parent = x;
+          x->right = erase_rec(x->right, key, removed);
+          if (x->right) x->right->parent = x;
+        } else {
+          x = rotate_left(x);
+          if (x->left) x->left->parent = x;
+          x->left = erase_rec(x->left, key, removed);
+          if (x->left) x->left->parent = x;
+        }
       }
     }
     x = decrease_level(x);
